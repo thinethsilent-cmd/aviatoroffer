@@ -117,7 +117,7 @@
         .auth-card {
             max-width: 420px;
             width: 100%;
-            padding: 40px;
+            padding: 32px;
             background: #0a0a0c;
             border: 1px solid rgba(124, 58, 237, 0.2);
             border-radius: 24px;
@@ -130,7 +130,7 @@
             background: #050507;
             border: 1px solid rgba(255,255,255,0.05);
             border-radius: 12px;
-            padding: 14px 18px;
+            padding: 12px 16px;
             color: white;
             font-size: 14px;
             outline: none;
@@ -151,14 +151,34 @@
             border-radius: 12px;
             font-weight: 800;
             font-size: 13px;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             transition: all 0.2s;
-            margin-top: 16px;
+            margin-top: 8px;
         }
 
         .primary-btn:hover {
             filter: brightness(1.1);
             transform: translateY(-1px);
+        }
+
+        .login-btn-google {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .login-btn-google:hover {
+            background: rgba(255,255,255,0.1);
         }
 
         .hidden-app {
@@ -171,26 +191,32 @@
     <!-- Auth Overlay -->
     <div id="auth-overlay">
         <div class="auth-card glass-card">
-            <div class="mb-8">
-                <div class="w-16 h-16 bg-violet-600 rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-lg shadow-violet-600/30">
-                    <i class="fa-solid fa-terminal text-white text-2xl"></i>
+            <div class="mb-6">
+                <div class="w-14 h-14 bg-violet-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-violet-600/30">
+                    <i class="fa-solid fa-terminal text-white text-xl"></i>
                 </div>
-                <h2 class="text-2xl font-black text-white tracking-tighter">THINZ <span class="text-violet-500">DEV</span></h2>
-                <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-2">Authorized Access Only</p>
+                <h2 class="text-xl font-black text-white tracking-tighter">THINZ <span class="text-violet-500">DEV</span></h2>
+                <p id="auth-subtitle" class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">Neural Access Required</p>
             </div>
             
             <div class="space-y-1 text-left">
-                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Developer ID (Email)</label>
+                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
                 <input type="email" id="auth-email" class="auth-input" placeholder="dev@thinz.io">
                 
-                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Security Token (Password)</label>
+                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Secure Password</label>
                 <input type="password" id="auth-pass" class="auth-input" placeholder="••••••••">
             </div>
 
-            <button id="email-action-btn" class="primary-btn uppercase">Sign In to Core</button>
+            <button id="email-action-btn" class="primary-btn uppercase tracking-[0.2em]">Sign In</button>
             
-            <div class="mt-10 pt-6 border-t border-white/5">
-                <p class="text-[9px] text-slate-700 uppercase font-black tracking-[0.3em]">Neural Core v9.2 • Secure Node</p>
+            <div class="flex items-center gap-3 my-6 opacity-20">
+                <div class="h-px bg-white flex-1"></div>
+                <span class="text-[10px] font-bold text-white">OR</span>
+                <div class="h-px bg-white flex-1"></div>
+            </div>
+</button>
+            
+       
             </div>
         </div>
     </div>
@@ -220,7 +246,8 @@
                     
                     <div class="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-full border border-white/10 shadow-inner">
                         <div id="user-avatar-placeholder" class="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center text-[10px] font-bold text-white">?</div>
-                        <span id="user-name" class="text-[10px] font-bold text-slate-300 uppercase tracking-tighter max-w-[100px] truncate">...</span>
+                        <img id="user-photo" src="" class="w-5 h-5 rounded-full hidden" alt="User">
+                        <span id="user-name" class="text-[10px] font-bold text-slate-300 uppercase tracking-tighter max-w-[80px] truncate">...</span>
                         <button id="logout-btn" class="text-slate-500 hover:text-red-400 transition-colors ml-1">
                             <i class="fa-solid fa-power-off text-xs"></i>
                         </button>
@@ -335,23 +362,30 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
+            signInWithPopup, 
+            GoogleAuthProvider, 
             onAuthStateChanged, 
             signOut,
-            signInWithEmailAndPassword
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBw97pleThkOE-A78DE__If-l_nftMrV6Y",
-            authDomain: "app-4c8c8.firebaseapp.com",
-            projectId: "app-4c8c8",
-            storageBucket: "app-4c8c8.firebasestorage.app",
-            messagingSenderId: "531005907708",
-            appId: "1:531005907708:web:cc313a78a61d4d63526d79",
-            measurementId: "G-78J65XPQ37"
-        };
+        // Environment-safe configuration
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "AIzaSyBw97pleThkOE-A78DE__If-l_nftMrV6Y", // Restoration of your key
+                authDomain: "app-4c8c8.firebaseapp.com",
+                projectId: "app-4c8c8",
+                storageBucket: "app-4c8c8.firebasestorage.app",
+                messagingSenderId: "531005907708",
+                appId: "1:531005907708:web:cc313a78a61d4d63526d79",
+                measurementId: "G-78J65XPQ37"
+            };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
         // --- State Management ---
         const state = {
@@ -360,18 +394,23 @@
             logs: ["[SYSTEM] THINz Dev v9.2 Core Engaged..."],
             isGenerating: false,
             offsets: [3, 7, 12, 18, 24, 30, 36, 42, 49, 55],
-            user: null
+            user: null,
+            authMode: 'login' // 'login' or 'register'
         };
 
         // --- DOM Elements ---
         const authOverlay = document.getElementById('auth-overlay');
         const appContent = document.getElementById('app-content');
+        const googleLoginBtn = document.getElementById('google-login');
         const emailActionBtn = document.getElementById('email-action-btn');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        
         const emailInput = document.getElementById('auth-email');
         const passInput = document.getElementById('auth-pass');
 
         const logoutBtn = document.getElementById('logout-btn');
         const userNameEl = document.getElementById('user-name');
+        const userPhotoEl = document.getElementById('user-photo');
         const userPlaceholder = document.getElementById('user-avatar-placeholder');
 
         const clockEl = document.getElementById('live-clock');
@@ -391,8 +430,17 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 state.user = user;
-                userNameEl.textContent = user.email.split('@')[0].toUpperCase();
-                userPlaceholder.textContent = user.email[0].toUpperCase();
+                userNameEl.textContent = user.displayName || user.email.split('@')[0];
+                
+                if (user.photoURL) {
+                    userPhotoEl.src = user.photoURL;
+                    userPhotoEl.classList.remove('hidden');
+                    userPlaceholder.classList.add('hidden');
+                } else {
+                    userPhotoEl.classList.add('hidden');
+                    userPlaceholder.classList.remove('hidden');
+                    userPlaceholder.textContent = (user.displayName || user.email)[0].toUpperCase();
+                }
                 
                 authOverlay.classList.add('hidden');
                 appContent.classList.remove('hidden-app');
@@ -406,27 +454,50 @@
             }
         });
 
+        // Setup Auth Toggle (Global Event delegation)
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'auth-toggle-btn') {
+                const toggleText = document.getElementById('auth-toggle-text');
+                if (state.authMode === 'login') {
+                    state.authMode = 'register';
+                    emailActionBtn.textContent = 'Register Account';
+                    authSubtitle.textContent = 'Create Neural Account';
+                    toggleText.innerHTML = 'Already have access? <button id="auth-toggle-btn" class="text-violet-500 hover:underline">Sign In</button>';
+                } else {
+                    state.authMode = 'login';
+                    emailActionBtn.textContent = 'Sign In';
+                    authSubtitle.textContent = 'Neural Access Required';
+                    toggleText.innerHTML = 'Need an account? <button id="auth-toggle-btn" class="text-violet-500 hover:underline">Register</button>';
+                }
+            }
+        });
+
+        // Email & Password Actions
         emailActionBtn.addEventListener('click', async () => {
             const email = emailInput.value;
             const pass = passInput.value;
 
             if (!email || !pass) {
-                alert("Credentials required for core access.");
+                alert("Please fill in all fields.");
                 return;
             }
 
-            emailActionBtn.textContent = 'VERIFYING...';
-            emailActionBtn.disabled = true;
-
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                if (state.authMode === 'login') {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, pass);
+                }
             } catch (err) {
                 console.error("Auth Error:", err);
-                alert("Unauthorized: Invalid Developer Credentials.");
-            } finally {
-                emailActionBtn.textContent = 'Sign In to Core';
-                emailActionBtn.disabled = false;
+                alert(err.message);
             }
+        });
+
+        googleLoginBtn.addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(err => {
+                console.error("Auth Error:", err);
+            });
         });
 
         logoutBtn.addEventListener('click', () => {
