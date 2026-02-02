@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THINz Dev Neural Core</title>
+    <title>THINz Dev | Neural Access</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,9 +12,7 @@
         :root {
             --bg-color: #040406;
             --card-bg: #0a0a0c;
-            --input-bg: #050507;
             --violet: #7c3aed;
-            --lime: #84cc16;
         }
 
         body {
@@ -22,16 +20,7 @@
             color: #cbd5e1;
             font-family: 'Inter', sans-serif;
             margin: 0;
-            overflow: hidden; /* Prevent scroll on login */
-        }
-
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .header-blur {
-            background-color: rgba(4, 4, 6, 0.9);
-            backdrop-filter: blur(12px);
+            overflow: hidden;
         }
 
         .glass-card {
@@ -40,85 +29,10 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .input-glow:focus {
-            border-color: rgba(124, 58, 237, 0.5);
-            box-shadow: 0 0 0 8px rgba(124, 58, 237, 0.05);
-        }
-
-        .btn-glow {
-            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.4);
-        }
-
-        .btn-glow:active {
-            transform: scale(0.98);
-        }
-
-        .loader-bar {
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            animation: loading 1.5s infinite linear;
-        }
-
-        @keyframes loading {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .signal-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .signal-card:hover {
-            border-color: rgba(124, 58, 237, 0.4);
-            transform: translateY(-4px);
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #040406;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #7c3aed;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Auth Overlay */
-        #auth-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-color);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
         .auth-card {
             max-width: 420px;
             width: 100%;
             padding: 32px;
-            background: #0a0a0c;
             border: 1px solid rgba(124, 58, 237, 0.2);
             border-radius: 24px;
             text-align: center;
@@ -161,34 +75,32 @@
             transform: translateY(-1px);
         }
 
-        .login-btn-google {
-            background: rgba(255,255,255,0.05);
-            color: white;
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 12px;
+        #auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
         }
 
-        .login-btn-google:hover {
-            background: rgba(255,255,255,0.1);
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--violet);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
         }
 
-        .hidden-app {
-            display: none;
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="selection:bg-violet-500/30">
+<body>
 
-    <!-- Auth Overlay -->
     <div id="auth-overlay">
         <div class="auth-card glass-card">
             <div class="mb-6">
@@ -209,262 +121,57 @@
 
             <button id="email-action-btn" class="primary-btn uppercase tracking-[0.2em]">Sign In</button>
             
-            <div class="flex items-center gap-3 my-6 opacity-20">
-                <div class="h-px bg-white flex-1"></div>
-                <span class="text-[10px] font-bold text-white">OR</span>
-                <div class="h-px bg-white flex-1"></div>
-            </div>
-</button>
-            
-       
+            <div id="status-msg" class="mt-4 text-[10px] font-bold uppercase hidden"></div>
+
+            <div class="mt-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <p id="auth-toggle-text">Need an account? <button id="auth-toggle-btn" class="text-violet-500 hover:underline">Register</button></p>
             </div>
         </div>
     </div>
 
-    <div id="app-content" class="hidden-app">
-        <!-- Header -->
-        <header class="border-b border-white/5 header-blur sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="p-1.5 bg-violet-600 rounded-lg shadow-lg shadow-violet-600/20">
-                        <i class="fa-solid fa-terminal text-white text-sm"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-black tracking-tighter text-white">
-                            THINZ <span class="text-violet-500 underline underline-offset-4">DEV</span>
-                        </h1>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-6">
-                    <div class="hidden md:flex gap-4 border-l border-white/10 pl-6 h-6 items-center">
-                        <div class="flex flex-col items-end">
-                            <span class="text-[8px] text-slate-500 font-black uppercase leading-none tracking-widest">Accuracy Node</span>
-                            <span id="entropy-val" class="text-xs font-mono text-lime-400">89.12%</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-full border border-white/10 shadow-inner">
-                        <div id="user-avatar-placeholder" class="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center text-[10px] font-bold text-white">?</div>
-                        <img id="user-photo" src="" class="w-5 h-5 rounded-full hidden" alt="User">
-                        <span id="user-name" class="text-[10px] font-bold text-slate-300 uppercase tracking-tighter max-w-[80px] truncate">...</span>
-                        <button id="logout-btn" class="text-slate-500 hover:text-red-400 transition-colors ml-1">
-                            <i class="fa-solid fa-power-off text-xs"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="hidden sm:flex items-center gap-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/10 shadow-inner">
-                        <i class="fa-regular fa-clock text-violet-400 text-xs"></i>
-                        <span id="live-clock" class="font-mono font-bold text-xs text-white tabular-nums">00:00:00</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <main class="max-w-7xl mx-auto px-6 py-8">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
-                <!-- Controls Panel -->
-                <section class="lg:col-span-4 space-y-6">
-                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
-                        <div class="flex items-center gap-2 mb-6 text-violet-500">
-                            <i class="fa-solid fa-stopwatch text-sm"></i>
-                            <h2 class="text-[10px] font-black uppercase tracking-[0.2em]">Minute Entry Logic</h2>
-                        </div>
-
-                        <div class="space-y-5">
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-widest">Base Time (HH:MM)</p>
-                                <input 
-                                    id="last-high-time"
-                                    type="time" 
-                                    class="w-full bg-[#050507] border border-white/5 rounded-xl px-5 py-4 outline-none input-glow transition-all text-2xl font-mono text-white text-center"
-                                >
-                            </div>
-
-                            <button 
-                                id="gen-btn"
-                                class="w-full bg-violet-600 hover:bg-violet-500 text-white font-black py-4 rounded-xl transition-all btn-glow active:scale-[0.98] overflow-hidden relative"
-                            >
-                                <span id="btn-text" class="relative z-10 tracking-[0.2em] text-[11px]">INITIALIZE SIGNALS</span>
-                                <div id="btn-loader" class="hidden loader-bar"></div>
-                            </button>
-
-                            <div id="error-msg" class="hidden flex items-center gap-2 text-red-500 text-[10px] font-bold uppercase justify-center animate-pulse">
-                                <i class="fa-solid fa-circle-exclamation"></i> <span id="error-text"></span>
-                            </div>
-                        </div>
-
-                        <!-- Console -->
-                        <div class="mt-8 pt-6 border-t border-white/5">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Process_Log</span>
-                                <span class="text-[8px] text-violet-500 font-mono">v9.2.0</span>
-                            </div>
-                            <div id="console-logs" class="space-y-1.5 h-20 overflow-hidden bg-black/40 p-3 rounded-lg border border-white/5">
-                                <p class="text-[9px] font-mono text-slate-500 truncate">[SYSTEM] THINz Dev v9.2 Core Engaged...</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-violet-950/10 border border-violet-500/10 rounded-2xl p-6">
-                        <div class="flex items-center gap-2 mb-4 text-lime-400">
-                            <i class="fa-solid fa-shield-halved text-sm"></i>
-                            <h3 class="text-[10px] font-black tracking-widest uppercase">Safe_Entry_Mode</h3>
-                        </div>
-                        <p class="text-[11px] text-slate-500 leading-relaxed font-medium">
-                            Signals optimized for <span class="text-white font-bold">3x-10x</span> range. 
-                            Wait for the exact minute start for maximum accuracy. Recalibrate if game seed resets.
-                        </p>
-                    </div>
-                </section>
-
-                <!-- Results Feed -->
-                <section class="lg:col-span-8">
-                    <div class="flex items-center justify-between mb-6 px-2">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-violet-600/10 flex items-center justify-center border border-violet-600/20">
-                                <i class="fa-solid fa-layer-group text-violet-400 text-sm"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-lg font-black text-white tracking-tighter uppercase">Neural Vectors</h2>
-                                <p class="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Minute-Sync: Active</p>
-                            </div>
-                        </div>
-                        <div id="filter-badge" class="hidden bg-lime-500/10 border border-lime-500/20 px-3 py-1 rounded-md">
-                            <span class="text-[10px] font-black text-lime-500 tracking-tighter uppercase">3x - 10x Filter Active</span>
-                        </div>
-                        <div id="live-indicator" class="flex items-center gap-2">
-                            <div class="w-2 h-2 rounded-full bg-lime-500 animate-pulse"></div>
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Live Output</span>
-                        </div>
-                    </div>
-
-                    <div id="signals-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 overflow-y-auto max-h-[70vh]">
-                        <!-- Placeholder when empty -->
-                        <div id="lock-screen" class="col-span-full py-28 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] bg-white/[0.01] text-center px-6">
-                            <div class="w-16 h-16 rounded-3xl bg-slate-900/50 flex items-center justify-center mb-6 border border-white/10 shadow-2xl">
-                                <i class="fa-solid fa-lock text-slate-700 text-xl"></i>
-                            </div>
-                            <p class="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">Neural Lock Active</p>
-                            <p class="text-slate-700 text-[10px] mt-2 font-bold max-w-[200px] leading-relaxed">
-                                Input the HH:MM of the last 10.00x flight to generate current 3x-10x vectors.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-    </div>
-
     <script type="module">
-        // --- Firebase Integration ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
-            signInWithPopup, 
-            GoogleAuthProvider, 
-            onAuthStateChanged, 
-            signOut,
             signInWithEmailAndPassword,
-            createUserWithEmailAndPassword
+            createUserWithEmailAndPassword,
+            onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Environment-safe configuration
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : {
-                apiKey: "AIzaSyBw97pleThkOE-A78DE__If-l_nftMrV6Y", // Restoration of your key
-                authDomain: "app-4c8c8.firebaseapp.com",
-                projectId: "app-4c8c8",
-                storageBucket: "app-4c8c8.firebasestorage.app",
-                messagingSenderId: "531005907708",
-                appId: "1:531005907708:web:cc313a78a61d4d63526d79",
-                measurementId: "G-78J65XPQ37"
-            };
+        const firebaseConfig = {
+            apiKey: "AIzaSyBw97pleThkOE-A78DE__If-l_nftMrV6Y",
+            authDomain: "app-4c8c8.firebaseapp.com",
+            projectId: "app-4c8c8",
+            storageBucket: "app-4c8c8.firebasestorage.app",
+            messagingSenderId: "531005907708",
+            appId: "1:531005907708:web:cc313a78a61d4d63526d79"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
 
-        // --- State Management ---
-        const state = {
-            currentTime: new Date(),
-            entropy: 0.8912,
-            logs: ["[SYSTEM] THINz Dev v9.2 Core Engaged..."],
-            isGenerating: false,
-            offsets: [3, 7, 12, 18, 24, 30, 36, 42, 49, 55],
-            user: null,
-            authMode: 'login' // 'login' or 'register'
-        };
-
-        // --- DOM Elements ---
-        const authOverlay = document.getElementById('auth-overlay');
-        const appContent = document.getElementById('app-content');
-        const googleLoginBtn = document.getElementById('google-login');
-        const emailActionBtn = document.getElementById('email-action-btn');
-        const authSubtitle = document.getElementById('auth-subtitle');
-        
+        let authMode = 'login';
         const emailInput = document.getElementById('auth-email');
         const passInput = document.getElementById('auth-pass');
+        const emailActionBtn = document.getElementById('email-action-btn');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        const statusMsg = document.getElementById('status-msg');
 
-        const logoutBtn = document.getElementById('logout-btn');
-        const userNameEl = document.getElementById('user-name');
-        const userPhotoEl = document.getElementById('user-photo');
-        const userPlaceholder = document.getElementById('user-avatar-placeholder');
-
-        const clockEl = document.getElementById('live-clock');
-        const entropyEl = document.getElementById('entropy-val');
-        const logsEl = document.getElementById('console-logs');
-        const inputEl = document.getElementById('last-high-time');
-        const genBtn = document.getElementById('gen-btn');
-        const btnText = document.getElementById('btn-text');
-        const btnLoader = document.getElementById('btn-loader');
-        const errorMsg = document.getElementById('error-msg');
-        const errorText = document.getElementById('error-text');
-        const signalsGrid = document.getElementById('signals-grid');
-        const lockScreen = document.getElementById('lock-screen');
-        const filterBadge = document.getElementById('filter-badge');
-
-        // --- Auth Logic ---
+        // Check if already logged in
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                state.user = user;
-                userNameEl.textContent = user.displayName || user.email.split('@')[0];
-                
-                if (user.photoURL) {
-                    userPhotoEl.src = user.photoURL;
-                    userPhotoEl.classList.remove('hidden');
-                    userPlaceholder.classList.add('hidden');
-                } else {
-                    userPhotoEl.classList.add('hidden');
-                    userPlaceholder.classList.remove('hidden');
-                    userPlaceholder.textContent = (user.displayName || user.email)[0].toUpperCase();
-                }
-                
-                authOverlay.classList.add('hidden');
-                appContent.classList.remove('hidden-app');
-                document.body.style.overflow = 'auto';
-                addLog(`[AUTH] Access granted to ${user.email}`);
-            } else {
-                state.user = null;
-                authOverlay.classList.remove('hidden');
-                appContent.classList.add('hidden-app');
-                document.body.style.overflow = 'hidden';
-            }
+            if (user) window.location.href = 'dashboard.html';
         });
 
-        // Setup Auth Toggle (Global Event delegation)
         document.addEventListener('click', (e) => {
             if (e.target.id === 'auth-toggle-btn') {
                 const toggleText = document.getElementById('auth-toggle-text');
-                if (state.authMode === 'login') {
-                    state.authMode = 'register';
+                if (authMode === 'login') {
+                    authMode = 'register';
                     emailActionBtn.textContent = 'Register Account';
                     authSubtitle.textContent = 'Create Neural Account';
                     toggleText.innerHTML = 'Already have access? <button id="auth-toggle-btn" class="text-violet-500 hover:underline">Sign In</button>';
                 } else {
-                    state.authMode = 'login';
+                    authMode = 'login';
                     emailActionBtn.textContent = 'Sign In';
                     authSubtitle.textContent = 'Neural Access Required';
                     toggleText.innerHTML = 'Need an account? <button id="auth-toggle-btn" class="text-violet-500 hover:underline">Register</button>';
@@ -472,195 +179,39 @@
             }
         });
 
-        // Email & Password Actions
+        const showStatus = (msg, isError = false) => {
+            statusMsg.textContent = msg;
+            statusMsg.className = `mt-4 text-[10px] font-bold uppercase ${isError ? 'text-red-500' : 'text-violet-500'}`;
+            statusMsg.classList.remove('hidden');
+        };
+
         emailActionBtn.addEventListener('click', async () => {
             const email = emailInput.value;
             const pass = passInput.value;
 
             if (!email || !pass) {
-                alert("Please fill in all fields.");
+                showStatus("Missing Credentials", true);
                 return;
             }
 
+            emailActionBtn.disabled = true;
+            emailActionBtn.innerHTML = '<span class="loader"></span> AUTHENTICATING...';
+
             try {
-                if (state.authMode === 'login') {
+                if (authMode === 'login') {
                     await signInWithEmailAndPassword(auth, email, pass);
                 } else {
                     await createUserWithEmailAndPassword(auth, email, pass);
                 }
+                // Redirect happens via onAuthStateChanged
+                showStatus("Access Granted. Redirecting...");
             } catch (err) {
-                console.error("Auth Error:", err);
-                alert(err.message);
+                console.error(err);
+                showStatus(err.code.replace('auth/', '').replace(/-/g, ' '), true);
+                emailActionBtn.disabled = false;
+                emailActionBtn.textContent = authMode === 'login' ? 'Sign In' : 'Register Account';
             }
         });
-
-        googleLoginBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch(err => {
-                console.error("Auth Error:", err);
-            });
-        });
-
-        logoutBtn.addEventListener('click', () => {
-            signOut(auth);
-        });
-
-        // --- Core Application Logic ---
-        const formatFullTime = (date) => {
-            const hh = String(date.getHours()).padStart(2, '0');
-            const mm = String(date.getMinutes()).padStart(2, '0');
-            const ss = String(date.getSeconds()).padStart(2, '0');
-            return `${hh}:${mm}:${ss}`;
-        };
-
-        const formatSignalTime = (date) => {
-            const hh = String(date.getHours()).padStart(2, '0');
-            const mm = String(date.getMinutes()).padStart(2, '0');
-            return `${hh}:${mm}`;
-        };
-
-        const addLog = (msg) => {
-            state.logs.unshift(msg);
-            if (state.logs.length > 5) state.logs.pop();
-            renderLogs();
-        };
-
-        const renderLogs = () => {
-            logsEl.innerHTML = state.logs.map(log => `
-                <p class="text-[9px] font-mono text-slate-500 truncate">${log}</p>
-            `).join('');
-        };
-
-        setInterval(() => {
-            state.currentTime = new Date();
-            if (clockEl) clockEl.textContent = formatFullTime(state.currentTime);
-            
-            state.entropy = Math.min(Math.max(state.entropy + (Math.random() * 0.001 - 0.0005), 0.82), 0.99);
-            if (entropyEl) entropyEl.textContent = (state.entropy * 100).toFixed(2) + '%';
-        }, 1000);
-
-        const generateSignals = () => {
-            if (!state.user) return;
-            const lastTime = inputEl.value;
-            if (!lastTime) {
-                errorText.textContent = "THINz_ERR: Timestamp entry required.";
-                errorMsg.classList.remove('hidden');
-                setTimeout(() => errorMsg.classList.add('hidden'), 4000);
-                return;
-            }
-
-            state.isGenerating = true;
-            btnText.textContent = "CALCULATING VECTORS...";
-            btnLoader.classList.remove('hidden');
-            genBtn.disabled = true;
-            addLog(`[EXEC] Analyzing minute clusters for T-${lastTime}...`);
-
-            const steps = [
-                "Accessing THINz sub-nodes...",
-                "Calibrating 3x-10x probability range...",
-                "Synthesizing minute-sync data...",
-                "Executing 80% accuracy verification...",
-                "Unlocking signal vectors..."
-            ];
-
-            let currentStep = 0;
-            const stepInterval = setInterval(() => {
-                if (currentStep < steps.length) {
-                    addLog(`[INFO] ${steps[currentStep]}`);
-                    currentStep++;
-                } else {
-                    clearInterval(stepInterval);
-                    finalizeSignals(lastTime);
-                }
-            }, 450);
-        };
-
-        const finalizeSignals = (lastTime) => {
-            const [h, m] = lastTime.split(':').map(Number);
-            const now = new Date();
-            const baseDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
-            
-            const results = state.offsets.map((offset, idx) => {
-                const due = new Date(baseDate.getTime() + offset * 60000);
-                const odd = (3.0 + Math.random() * 7.0).toFixed(2);
-                const confidence = (81 + Math.random() * 8).toFixed(1);
-                return { due, odd, confidence, id: Date.now() + idx };
-            }).filter(sig => sig.due > now);
-
-            renderSignals(results);
-
-            state.isGenerating = false;
-            btnText.textContent = "INITIALIZE SIGNALS";
-            btnLoader.classList.add('hidden');
-            genBtn.disabled = false;
-            addLog(`[SUCCESS] Found ${results.length} high-confidence entries.`);
-        };
-
-        const renderSignals = (signals) => {
-            if (signals.length === 0) {
-                signalsGrid.innerHTML = `
-                    <div class="col-span-full py-28 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] bg-white/[0.01] text-center px-6">
-                        <div class="w-16 h-16 rounded-3xl bg-slate-900/50 flex items-center justify-center mb-6 border border-white/10 shadow-2xl">
-                            <i class="fa-solid fa-hourglass-end text-slate-700 text-xl"></i>
-                        </div>
-                        <p class="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">No Future Signals</p>
-                        <p class="text-slate-700 text-[10px] mt-2 font-bold max-w-[200px] leading-relaxed">
-                            Try updating the base time with a more recent 10x multiplier timestamp.
-                        </p>
-                    </div>
-                `;
-                filterBadge.classList.add('hidden');
-                return;
-            }
-
-            filterBadge.classList.remove('hidden');
-            signalsGrid.innerHTML = signals.map((sig, index) => `
-                <div class="group bg-[#0a0a0c] border border-white/10 rounded-2xl p-5 hover:border-violet-500/40 transition-all relative overflow-hidden shadow-xl fade-in" style="animation-delay: ${index * 0.05}s">
-                    <div class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-20 transition-opacity">
-                        <i class="fa-solid fa-bolt text-white text-5xl"></i>
-                    </div>
-
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-black flex items-center justify-center border border-white/10 shadow-inner group-hover:border-violet-500/30 transition-colors">
-                                <i class="fa-regular fa-clock text-violet-500 text-lg"></i>
-                            </div>
-                            <div>
-                                <p class="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] mb-0.5">Signal Time</p>
-                                <span class="text-2xl font-mono font-black text-white tracking-tight">
-                                    ${formatSignalTime(sig.due)}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-[8px] font-black text-slate-600 uppercase mb-1">Status</span>
-                            <span class="text-[9px] font-black text-lime-400 bg-lime-500/10 px-2.5 py-1 rounded-full border border-lime-500/20 uppercase tracking-tighter">Verified</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-black/50 p-4 rounded-xl border border-white/5 group-hover:bg-violet-500/5 transition-colors">
-                            <p class="text-[9px] font-black text-slate-500 uppercase mb-1.5 tracking-widest">Expected Odd</p>
-                            <p class="text-3xl font-black text-white italic">${sig.odd}<span class="text-violet-500 text-lg ml-0.5">x</span></p>
-                        </div>
-                        <div class="bg-black/50 p-4 rounded-xl border border-white/5 group-hover:bg-violet-500/5 transition-colors">
-                            <p class="text-[9px] font-black text-slate-500 uppercase mb-1.5 tracking-widest">Precision</p>
-                            <p class="text-3xl font-black text-white">${sig.confidence}<span class="text-slate-600 text-lg ml-0.5">%</span></p>
-                        </div>
-                    </div>
-
-                    <div class="mt-5 pt-4 border-t border-white/5 flex items-center justify-between">
-                        <span class="text-[8px] font-mono text-slate-700 tracking-widest uppercase">M_SIG: ${formatSignalTime(sig.due)} / ${sig.due.getMinutes()}M</span>
-                        <div class="flex gap-1.5">
-                            <div class="w-1 h-1 rounded-full bg-violet-500"></div>
-                            <div class="w-1 h-1 rounded-full bg-violet-500/50"></div>
-                            <div class="w-1 h-1 rounded-full bg-violet-500/20"></div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        };
-
-        genBtn.addEventListener('click', generateSignals);
     </script>
 </body>
 </html>
