@@ -22,7 +22,7 @@
             color: #cbd5e1;
             font-family: 'Inter', sans-serif;
             margin: 0;
-            overflow-x: hidden;
+            overflow: hidden; /* Prevent scroll on login */
         }
 
         .font-mono {
@@ -100,160 +100,280 @@
             from { opacity: 0; transform: translateX(20px); }
             to { opacity: 1; transform: translateX(0); }
         }
+
+        /* Auth Overlay */
+        #auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-color);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .auth-card {
+            max-width: 420px;
+            width: 100%;
+            padding: 40px;
+            background: #0a0a0c;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.1);
+        }
+
+        .auth-input {
+            width: 100%;
+            background: #050507;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .auth-input:focus {
+            border-color: var(--violet);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+        }
+
+        .primary-btn {
+            background: var(--violet);
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            margin-top: 16px;
+        }
+
+        .primary-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .hidden-app {
+            display: none;
+        }
     </style>
 </head>
 <body class="selection:bg-violet-500/30">
 
-    <!-- Header -->
-    <header class="border-b border-white/5 header-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="p-1.5 bg-violet-600 rounded-lg shadow-lg shadow-violet-600/20">
-                    <i class="fa-solid fa-terminal text-white text-sm"></i>
+    <!-- Auth Overlay -->
+    <div id="auth-overlay">
+        <div class="auth-card glass-card">
+            <div class="mb-8">
+                <div class="w-16 h-16 bg-violet-600 rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-lg shadow-violet-600/30">
+                    <i class="fa-solid fa-terminal text-white text-2xl"></i>
                 </div>
-                <div>
-                    <h1 class="text-lg font-black tracking-tighter text-white">
-                        THINZ <span class="text-violet-500 underline underline-offset-4">DEV</span>
-                    </h1>
-                </div>
+                <h2 class="text-2xl font-black text-white tracking-tighter">THINZ <span class="text-violet-500">DEV</span></h2>
+                <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-2">Authorized Access Only</p>
             </div>
             
-            <div class="flex items-center gap-6">
-                <div class="hidden md:flex gap-4 border-l border-white/10 pl-6 h-6 items-center">
-                    <div class="flex flex-col items-end">
-                        <span class="text-[8px] text-slate-500 font-black uppercase leading-none tracking-widest">Accuracy Node</span>
-                        <span id="entropy-val" class="text-xs font-mono text-lime-400">89.12%</span>
-                    </div>
-                </div>
-                <div class="bg-white/5 px-4 py-1.5 rounded-full border border-white/10 flex items-center gap-3 shadow-inner">
-                    <i class="fa-regular fa-clock text-violet-400 text-xs"></i>
-                    <span id="live-clock" class="font-mono font-bold text-xs text-white tabular-nums">00:00:00</span>
-                </div>
+            <div class="space-y-1 text-left">
+                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Developer ID (Email)</label>
+                <input type="email" id="auth-email" class="auth-input" placeholder="dev@thinz.io">
+                
+                <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Security Token (Password)</label>
+                <input type="password" id="auth-pass" class="auth-input" placeholder="••••••••">
+            </div>
+
+            <button id="email-action-btn" class="primary-btn uppercase">Sign In to Core</button>
+            
+            <div class="mt-10 pt-6 border-t border-white/5">
+                <p class="text-[9px] text-slate-700 uppercase font-black tracking-[0.3em]">Neural Core v9.2 • Secure Node</p>
             </div>
         </div>
-    </header>
+    </div>
 
-    <main class="max-w-7xl mx-auto px-6 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- Controls Panel -->
-            <section class="lg:col-span-4 space-y-6">
-                <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
-                    <div class="flex items-center gap-2 mb-6 text-violet-500">
-                        <i class="fa-solid fa-stopwatch text-sm"></i>
-                        <h2 class="text-[10px] font-black uppercase tracking-[0.2em]">Minute Entry Logic</h2>
+    <div id="app-content" class="hidden-app">
+        <!-- Header -->
+        <header class="border-b border-white/5 header-blur sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-1.5 bg-violet-600 rounded-lg shadow-lg shadow-violet-600/20">
+                        <i class="fa-solid fa-terminal text-white text-sm"></i>
                     </div>
-
-                    <div class="space-y-5">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-widest">Base Time (HH:MM)</p>
-                            <input 
-                                id="last-high-time"
-                                type="time" 
-                                class="w-full bg-[#050507] border border-white/5 rounded-xl px-5 py-4 outline-none input-glow transition-all text-2xl font-mono text-white text-center"
-                            >
+                    <div>
+                        <h1 class="text-lg font-black tracking-tighter text-white">
+                            THINZ <span class="text-violet-500 underline underline-offset-4">DEV</span>
+                        </h1>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6">
+                    <div class="hidden md:flex gap-4 border-l border-white/10 pl-6 h-6 items-center">
+                        <div class="flex flex-col items-end">
+                            <span class="text-[8px] text-slate-500 font-black uppercase leading-none tracking-widest">Accuracy Node</span>
+                            <span id="entropy-val" class="text-xs font-mono text-lime-400">89.12%</span>
                         </div>
-
-                        <button 
-                            id="gen-btn"
-                            class="w-full bg-violet-600 hover:bg-violet-500 text-white font-black py-4 rounded-xl transition-all btn-glow active:scale-[0.98] overflow-hidden relative"
-                        >
-                            <span id="btn-text" class="relative z-10 tracking-[0.2em] text-[11px]">INITIALIZE SIGNALS</span>
-                            <div id="btn-loader" class="hidden loader-bar"></div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-full border border-white/10 shadow-inner">
+                        <div id="user-avatar-placeholder" class="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center text-[10px] font-bold text-white">?</div>
+                        <span id="user-name" class="text-[10px] font-bold text-slate-300 uppercase tracking-tighter max-w-[100px] truncate">...</span>
+                        <button id="logout-btn" class="text-slate-500 hover:text-red-400 transition-colors ml-1">
+                            <i class="fa-solid fa-power-off text-xs"></i>
                         </button>
-
-                        <div id="error-msg" class="hidden flex items-center gap-2 text-red-500 text-[10px] font-bold uppercase justify-center animate-pulse">
-                            <i class="fa-solid fa-circle-exclamation"></i> <span id="error-text"></span>
-                        </div>
                     </div>
-
-                    <!-- Console -->
-                    <div class="mt-8 pt-6 border-t border-white/5">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Process_Log</span>
-                            <span class="text-[8px] text-violet-500 font-mono">v9.2.0</span>
-                        </div>
-                        <div id="console-logs" class="space-y-1.5 h-20 overflow-hidden bg-black/40 p-3 rounded-lg border border-white/5">
-                            <p class="text-[9px] font-mono text-slate-500 truncate">[SYSTEM] THINz Dev v9.2 Core Engaged...</p>
-                        </div>
+                    
+                    <div class="hidden sm:flex items-center gap-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/10 shadow-inner">
+                        <i class="fa-regular fa-clock text-violet-400 text-xs"></i>
+                        <span id="live-clock" class="font-mono font-bold text-xs text-white tabular-nums">00:00:00</span>
                     </div>
                 </div>
+            </div>
+        </header>
 
-                <div class="bg-violet-950/10 border border-violet-500/10 rounded-2xl p-6">
-                    <div class="flex items-center gap-2 mb-4 text-lime-400">
-                        <i class="fa-solid fa-shield-halved text-sm"></i>
-                        <h3 class="text-[10px] font-black tracking-widest uppercase">Safe_Entry_Mode</h3>
-                    </div>
-                    <p class="text-[11px] text-slate-500 leading-relaxed font-medium">
-                        Signals optimized for <span class="text-white font-bold">3x-10x</span> range. 
-                        Wait for the exact minute start for maximum accuracy. Recalibrate if game seed resets.
-                    </p>
-                </div>
-            </section>
+        <main class="max-w-7xl mx-auto px-6 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Controls Panel -->
+                <section class="lg:col-span-4 space-y-6">
+                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+                        <div class="flex items-center gap-2 mb-6 text-violet-500">
+                            <i class="fa-solid fa-stopwatch text-sm"></i>
+                            <h2 class="text-[10px] font-black uppercase tracking-[0.2em]">Minute Entry Logic</h2>
+                        </div>
 
-            <!-- Results Feed -->
-            <section class="lg:col-span-8">
-                <div class="flex items-center justify-between mb-6 px-2">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-violet-600/10 flex items-center justify-center border border-violet-600/20">
-                            <i class="fa-solid fa-layer-group text-violet-400 text-sm"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-black text-white tracking-tighter uppercase">Neural Vectors</h2>
-                            <p class="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Minute-Sync: Active</p>
-                        </div>
-                    </div>
-                    <div id="filter-badge" class="hidden bg-lime-500/10 border border-lime-500/20 px-3 py-1 rounded-md">
-                        <span class="text-[10px] font-black text-lime-500 tracking-tighter uppercase">3x - 10x Filter Active</span>
-                    </div>
-                    <div id="live-indicator" class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-lime-500 animate-pulse"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Live Output</span>
-                    </div>
-                </div>
+                        <div class="space-y-5">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-widest">Base Time (HH:MM)</p>
+                                <input 
+                                    id="last-high-time"
+                                    type="time" 
+                                    class="w-full bg-[#050507] border border-white/5 rounded-xl px-5 py-4 outline-none input-glow transition-all text-2xl font-mono text-white text-center"
+                                >
+                            </div>
 
-                <div id="signals-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Placeholder when empty -->
-                    <div id="lock-screen" class="col-span-full py-28 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] bg-white/[0.01] text-center px-6">
-                        <div class="w-16 h-16 rounded-3xl bg-slate-900/50 flex items-center justify-center mb-6 border border-white/10 shadow-2xl">
-                            <i class="fa-solid fa-lock text-slate-700 text-xl"></i>
+                            <button 
+                                id="gen-btn"
+                                class="w-full bg-violet-600 hover:bg-violet-500 text-white font-black py-4 rounded-xl transition-all btn-glow active:scale-[0.98] overflow-hidden relative"
+                            >
+                                <span id="btn-text" class="relative z-10 tracking-[0.2em] text-[11px]">INITIALIZE SIGNALS</span>
+                                <div id="btn-loader" class="hidden loader-bar"></div>
+                            </button>
+
+                            <div id="error-msg" class="hidden flex items-center gap-2 text-red-500 text-[10px] font-bold uppercase justify-center animate-pulse">
+                                <i class="fa-solid fa-circle-exclamation"></i> <span id="error-text"></span>
+                            </div>
                         </div>
-                        <p class="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">Neural Lock Active</p>
-                        <p class="text-slate-700 text-[10px] mt-2 font-bold max-w-[200px] leading-relaxed">
-                            Input the HH:MM of the last 10.00x flight to generate current 3x-10x vectors.
+
+                        <!-- Console -->
+                        <div class="mt-8 pt-6 border-t border-white/5">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Process_Log</span>
+                                <span class="text-[8px] text-violet-500 font-mono">v9.2.0</span>
+                            </div>
+                            <div id="console-logs" class="space-y-1.5 h-20 overflow-hidden bg-black/40 p-3 rounded-lg border border-white/5">
+                                <p class="text-[9px] font-mono text-slate-500 truncate">[SYSTEM] THINz Dev v9.2 Core Engaged...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-violet-950/10 border border-violet-500/10 rounded-2xl p-6">
+                        <div class="flex items-center gap-2 mb-4 text-lime-400">
+                            <i class="fa-solid fa-shield-halved text-sm"></i>
+                            <h3 class="text-[10px] font-black tracking-widest uppercase">Safe_Entry_Mode</h3>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed font-medium">
+                            Signals optimized for <span class="text-white font-bold">3x-10x</span> range. 
+                            Wait for the exact minute start for maximum accuracy. Recalibrate if game seed resets.
                         </p>
                     </div>
-                </div>
-            </section>
-        </div>
-    </main>
+                </section>
 
-    <footer class="py-12 border-t border-white/5 mt-10">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-4">
-                <span class="text-[9px] font-black text-slate-700 tracking-[0.3em] uppercase italic">
-                    THINz Dev Neural Framework • v9.2 Stable
-                </span>
-            </div>
-            <div class="flex gap-8 text-[9px] font-black text-slate-600 uppercase tracking-widest">
-                <span class="hover:text-violet-400 cursor-pointer transition-colors">Terms</span>
-                <span class="hover:text-violet-400 cursor-pointer transition-colors">API Keys</span>
-                <span class="hover:text-violet-400 cursor-pointer transition-colors">Dev_Log</span>
-            </div>
-        </div>
-    </footer>
+                <!-- Results Feed -->
+                <section class="lg:col-span-8">
+                    <div class="flex items-center justify-between mb-6 px-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-violet-600/10 flex items-center justify-center border border-violet-600/20">
+                                <i class="fa-solid fa-layer-group text-violet-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-black text-white tracking-tighter uppercase">Neural Vectors</h2>
+                                <p class="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Minute-Sync: Active</p>
+                            </div>
+                        </div>
+                        <div id="filter-badge" class="hidden bg-lime-500/10 border border-lime-500/20 px-3 py-1 rounded-md">
+                            <span class="text-[10px] font-black text-lime-500 tracking-tighter uppercase">3x - 10x Filter Active</span>
+                        </div>
+                        <div id="live-indicator" class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-lime-500 animate-pulse"></div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Live Output</span>
+                        </div>
+                    </div>
 
-    <script>
+                    <div id="signals-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 overflow-y-auto max-h-[70vh]">
+                        <!-- Placeholder when empty -->
+                        <div id="lock-screen" class="col-span-full py-28 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] bg-white/[0.01] text-center px-6">
+                            <div class="w-16 h-16 rounded-3xl bg-slate-900/50 flex items-center justify-center mb-6 border border-white/10 shadow-2xl">
+                                <i class="fa-solid fa-lock text-slate-700 text-xl"></i>
+                            </div>
+                            <p class="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">Neural Lock Active</p>
+                            <p class="text-slate-700 text-[10px] mt-2 font-bold max-w-[200px] leading-relaxed">
+                                Input the HH:MM of the last 10.00x flight to generate current 3x-10x vectors.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // --- Firebase Integration ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut,
+            signInWithEmailAndPassword
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBw97pleThkOE-A78DE__If-l_nftMrV6Y",
+            authDomain: "app-4c8c8.firebaseapp.com",
+            projectId: "app-4c8c8",
+            storageBucket: "app-4c8c8.firebasestorage.app",
+            messagingSenderId: "531005907708",
+            appId: "1:531005907708:web:cc313a78a61d4d63526d79",
+            measurementId: "G-78J65XPQ37"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
         // --- State Management ---
         const state = {
             currentTime: new Date(),
             entropy: 0.8912,
             logs: ["[SYSTEM] THINz Dev v9.2 Core Engaged..."],
             isGenerating: false,
-            offsets: [3, 7, 12, 18, 24, 30, 36, 42, 49, 55]
+            offsets: [3, 7, 12, 18, 24, 30, 36, 42, 49, 55],
+            user: null
         };
 
         // --- DOM Elements ---
+        const authOverlay = document.getElementById('auth-overlay');
+        const appContent = document.getElementById('app-content');
+        const emailActionBtn = document.getElementById('email-action-btn');
+        const emailInput = document.getElementById('auth-email');
+        const passInput = document.getElementById('auth-pass');
+
+        const logoutBtn = document.getElementById('logout-btn');
+        const userNameEl = document.getElementById('user-name');
+        const userPlaceholder = document.getElementById('user-avatar-placeholder');
+
         const clockEl = document.getElementById('live-clock');
         const entropyEl = document.getElementById('entropy-val');
         const logsEl = document.getElementById('console-logs');
@@ -267,7 +387,53 @@
         const lockScreen = document.getElementById('lock-screen');
         const filterBadge = document.getElementById('filter-badge');
 
-        // --- Helpers ---
+        // --- Auth Logic ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                state.user = user;
+                userNameEl.textContent = user.email.split('@')[0].toUpperCase();
+                userPlaceholder.textContent = user.email[0].toUpperCase();
+                
+                authOverlay.classList.add('hidden');
+                appContent.classList.remove('hidden-app');
+                document.body.style.overflow = 'auto';
+                addLog(`[AUTH] Access granted to ${user.email}`);
+            } else {
+                state.user = null;
+                authOverlay.classList.remove('hidden');
+                appContent.classList.add('hidden-app');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+
+        emailActionBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            const pass = passInput.value;
+
+            if (!email || !pass) {
+                alert("Credentials required for core access.");
+                return;
+            }
+
+            emailActionBtn.textContent = 'VERIFYING...';
+            emailActionBtn.disabled = true;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                console.error("Auth Error:", err);
+                alert("Unauthorized: Invalid Developer Credentials.");
+            } finally {
+                emailActionBtn.textContent = 'Sign In to Core';
+                emailActionBtn.disabled = false;
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // --- Core Application Logic ---
         const formatFullTime = (date) => {
             const hh = String(date.getHours()).padStart(2, '0');
             const mm = String(date.getMinutes()).padStart(2, '0');
@@ -293,17 +459,16 @@
             `).join('');
         };
 
-        // --- Core Loops ---
         setInterval(() => {
             state.currentTime = new Date();
-            clockEl.textContent = formatFullTime(state.currentTime);
+            if (clockEl) clockEl.textContent = formatFullTime(state.currentTime);
             
             state.entropy = Math.min(Math.max(state.entropy + (Math.random() * 0.001 - 0.0005), 0.82), 0.99);
-            entropyEl.textContent = (state.entropy * 100).toFixed(2) + '%';
+            if (entropyEl) entropyEl.textContent = (state.entropy * 100).toFixed(2) + '%';
         }, 1000);
 
-        // --- Logic ---
         const generateSignals = () => {
+            if (!state.user) return;
             const lastTime = inputEl.value;
             if (!lastTime) {
                 errorText.textContent = "THINz_ERR: Timestamp entry required.";
@@ -424,7 +589,6 @@
             `).join('');
         };
 
-        // --- Listeners ---
         genBtn.addEventListener('click', generateSignals);
     </script>
 </body>
