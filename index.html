@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THINz Dev Neural Core</title>
+    <title>THINz Dev Neural Core - Dual Vector</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -68,43 +68,23 @@
             100% { left: 100%; }
         }
 
-        .signal-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .signal-card:hover {
-            border-color: rgba(124, 58, 237, 0.4);
-            transform: translateY(-4px);
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #040406;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #7c3aed;
-        }
-
         .fade-in {
             animation: fadeIn 0.5s ease forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #040406; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7c3aed; }
     </style>
 </head>
 <body class="selection:bg-violet-500/30">
 
-    <!-- Header -->
     <header class="border-b border-white/5 header-blur sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -112,7 +92,7 @@
                     <i class="fa-solid fa-terminal text-white text-sm"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-black tracking-tighter text-white">
+                    <h1 class="text-lg font-black tracking-tighter text-white uppercase">
                         THINZ <span class="text-violet-500 underline underline-offset-4">DEV</span>
                     </h1>
                 </div>
@@ -121,8 +101,8 @@
             <div class="flex items-center gap-6">
                 <div class="hidden md:flex gap-4 border-l border-white/10 pl-6 h-6 items-center">
                     <div class="flex flex-col items-end">
-                        <span class="text-[8px] text-slate-500 font-black uppercase leading-none tracking-widest">Accuracy Node</span>
-                        <span id="entropy-val" class="text-xs font-mono text-lime-400">89.12%</span>
+                        <span class="text-[8px] text-slate-500 font-black uppercase leading-none tracking-widest">Multi-Node Sync</span>
+                        <span id="entropy-val" class="text-xs font-mono text-lime-400">92.45%</span>
                     </div>
                 </div>
                 <div class="bg-white/5 px-4 py-1.5 rounded-full border border-white/10 flex items-center gap-3 shadow-inner">
@@ -140,29 +120,39 @@
             <section class="lg:col-span-4 space-y-6">
                 <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
                     <div class="flex items-center gap-2 mb-6 text-violet-500">
-                        <i class="fa-solid fa-stopwatch text-sm"></i>
-                        <h2 class="text-[10px] font-black uppercase tracking-[0.2em]">Minute Entry Logic</h2>
+                        <i class="fa-solid fa-microchip text-sm"></i>
+                        <h2 class="text-[10px] font-black uppercase tracking-[0.2em]">Dual-Vector Input</h2>
                     </div>
 
-                    <div class="space-y-5">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-widest">Base Time (HH:MM)</p>
-                            <input 
-                                id="last-high-time"
-                                type="time" 
-                                class="w-full bg-[#050507] border border-white/5 rounded-xl px-5 py-4 outline-none input-glow transition-all text-2xl font-mono text-white text-center"
-                            >
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <p class="text-[9px] font-bold text-slate-500 mb-2 uppercase tracking-widest">Last 10x+ Time (HH:MM)</p>
+                                <input 
+                                    id="last-time-1"
+                                    type="time" 
+                                    class="w-full bg-[#050507] border border-white/5 rounded-xl px-4 py-3 outline-none input-glow transition-all text-xl font-mono text-white text-center"
+                                >
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-bold text-slate-500 mb-2 uppercase tracking-widest">Previous 10x+ Time (HH:MM)</p>
+                                <input 
+                                    id="last-time-2"
+                                    type="time" 
+                                    class="w-full bg-[#050507] border border-white/5 rounded-xl px-4 py-3 outline-none input-glow transition-all text-xl font-mono text-white text-center"
+                                >
+                            </div>
                         </div>
 
                         <button 
                             id="gen-btn"
-                            class="w-full bg-violet-600 hover:bg-violet-500 text-white font-black py-4 rounded-xl transition-all btn-glow active:scale-[0.98] overflow-hidden relative"
+                            class="w-full bg-violet-600 hover:bg-violet-500 text-white font-black py-4 rounded-xl transition-all btn-glow active:scale-[0.98] overflow-hidden relative mt-2"
                         >
-                            <span id="btn-text" class="relative z-10 tracking-[0.2em] text-[11px]">INITIALIZE SIGNALS</span>
+                            <span id="btn-text" class="relative z-10 tracking-[0.2em] text-[11px]">RUN DUAL ANALYSIS</span>
                             <div id="btn-loader" class="hidden loader-bar"></div>
                         </button>
 
-                        <div id="error-msg" class="hidden flex items-center gap-2 text-red-500 text-[10px] font-bold uppercase justify-center animate-pulse">
+                        <div id="error-msg" class="hidden flex items-center gap-2 text-red-500 text-[10px] font-bold uppercase justify-center animate-pulse py-2">
                             <i class="fa-solid fa-circle-exclamation"></i> <span id="error-text"></span>
                         </div>
                     </div>
@@ -170,11 +160,11 @@
                     <!-- Console -->
                     <div class="mt-8 pt-6 border-t border-white/5">
                         <div class="flex justify-between items-center mb-3">
-                            <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Process_Log</span>
-                            <span class="text-[8px] text-violet-500 font-mono">v9.2.0</span>
+                            <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Neural_Logs</span>
+                            <span class="text-[8px] text-violet-500 font-mono">Dual-Core v9.3</span>
                         </div>
-                        <div id="console-logs" class="space-y-1.5 h-20 overflow-hidden bg-black/40 p-3 rounded-lg border border-white/5">
-                            <p class="text-[9px] font-mono text-slate-500 truncate">[SYSTEM] THINz Dev v9.2 Core Engaged...</p>
+                        <div id="console-logs" class="space-y-1.5 h-24 overflow-hidden bg-black/40 p-3 rounded-lg border border-white/5">
+                            <p class="text-[9px] font-mono text-slate-500 truncate">[SYSTEM] Awaiting dual-timestamp input...</p>
                         </div>
                     </div>
                 </div>
@@ -182,11 +172,11 @@
                 <div class="bg-violet-950/10 border border-violet-500/10 rounded-2xl p-6">
                     <div class="flex items-center gap-2 mb-4 text-lime-400">
                         <i class="fa-solid fa-shield-halved text-sm"></i>
-                        <h3 class="text-[10px] font-black tracking-widest uppercase">Safe_Entry_Mode</h3>
+                        <h3 class="text-[10px] font-black tracking-widest uppercase">Safety_Protocol</h3>
                     </div>
                     <p class="text-[11px] text-slate-500 leading-relaxed font-medium">
-                        Signals optimized for <span class="text-white font-bold">3x-10x</span> range. 
-                        Wait for the exact minute start for maximum accuracy. Recalibrate if game seed resets.
+                        Analysis triangulates between two high-multiplier points. 
+                        <span class="text-white font-bold">A 2-second buffer</span> is automatically applied to signal outputs for network latency protection.
                     </p>
                 </div>
             </section>
@@ -196,31 +186,26 @@
                 <div class="flex items-center justify-between mb-6 px-2">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg bg-violet-600/10 flex items-center justify-center border border-violet-600/20">
-                            <i class="fa-solid fa-layer-group text-violet-400 text-sm"></i>
+                            <i class="fa-solid fa-satellite-dish text-violet-400 text-sm"></i>
                         </div>
                         <div>
-                            <h2 class="text-lg font-black text-white tracking-tighter uppercase">Neural Vectors</h2>
-                            <p class="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Minute-Sync: Active</p>
+                            <h2 class="text-lg font-black text-white tracking-tighter uppercase">Calculated Vectors</h2>
+                            <p class="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Triangulated Output</p>
                         </div>
                     </div>
                     <div id="filter-badge" class="hidden bg-lime-500/10 border border-lime-500/20 px-3 py-1 rounded-md">
-                        <span class="text-[10px] font-black text-lime-500 tracking-tighter uppercase">3x - 10x Filter Active</span>
-                    </div>
-                    <div id="live-indicator" class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-lime-500 animate-pulse"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Live Output</span>
+                        <span class="text-[10px] font-black text-lime-500 tracking-tighter uppercase">Sync Locked</span>
                     </div>
                 </div>
 
                 <div id="signals-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Placeholder when empty -->
                     <div id="lock-screen" class="col-span-full py-28 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] bg-white/[0.01] text-center px-6">
                         <div class="w-16 h-16 rounded-3xl bg-slate-900/50 flex items-center justify-center mb-6 border border-white/10 shadow-2xl">
-                            <i class="fa-solid fa-lock text-slate-700 text-xl"></i>
+                            <i class="fa-solid fa-dna text-slate-700 text-xl"></i>
                         </div>
-                        <p class="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">Neural Lock Active</p>
+                        <p class="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">Waiting for Data</p>
                         <p class="text-slate-700 text-[10px] mt-2 font-bold max-w-[200px] leading-relaxed">
-                            Input the HH:MM of the last 10.00x flight to generate current 3x-10x vectors.
+                            Input both timestamps to calibrate the neural engine and reveal future vectors.
                         </p>
                     </div>
                 </div>
@@ -229,35 +214,33 @@
     </main>
 
     <footer class="py-12 border-t border-white/5 mt-10">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-4">
-                <span class="text-[9px] font-black text-slate-700 tracking-[0.3em] uppercase italic">
-                    THINz Dev Neural Framework • v9.2 Stable
-                </span>
-            </div>
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
+            <span class="text-[9px] font-black text-slate-700 tracking-[0.3em] uppercase">
+                THINz Dev Neural Framework • Built for v9.3 Engine
+            </span>
             <div class="flex gap-8 text-[9px] font-black text-slate-600 uppercase tracking-widest">
-                <span class="hover:text-violet-400 cursor-pointer transition-colors">Terms</span>
-                <span class="hover:text-violet-400 cursor-pointer transition-colors">API Keys</span>
-                <span class="hover:text-violet-400 cursor-pointer transition-colors">Dev_Log</span>
+                <span class="hover:text-violet-400 cursor-pointer transition-colors">Low Latency</span>
+                <span class="hover:text-violet-400 cursor-pointer transition-colors">Cross-Check</span>
+                <span class="hover:text-violet-400 cursor-pointer transition-colors">Encrypted</span>
             </div>
         </div>
     </footer>
 
     <script>
-        // --- State Management ---
         const state = {
             currentTime: new Date(),
-            entropy: 0.8912,
-            logs: ["[SYSTEM] THINz Dev v9.2 Core Engaged..."],
+            entropy: 0.9245,
+            logs: ["[SYSTEM] THINz Dev v9.3 Core Standby..."],
             isGenerating: false,
-            offsets: [3, 7, 12, 18, 24, 30, 36, 42, 49, 55]
+            // Offsets represent the logical spacing between high cycles
+            offsets: [5, 11, 16, 22, 28, 35, 41, 48, 54, 59]
         };
 
-        // --- DOM Elements ---
         const clockEl = document.getElementById('live-clock');
         const entropyEl = document.getElementById('entropy-val');
         const logsEl = document.getElementById('console-logs');
-        const inputEl = document.getElementById('last-high-time');
+        const input1 = document.getElementById('last-time-1');
+        const input2 = document.getElementById('last-time-2');
         const genBtn = document.getElementById('gen-btn');
         const btnText = document.getElementById('btn-text');
         const btnLoader = document.getElementById('btn-loader');
@@ -267,109 +250,114 @@
         const lockScreen = document.getElementById('lock-screen');
         const filterBadge = document.getElementById('filter-badge');
 
-        // --- Helpers ---
         const formatFullTime = (date) => {
-            const hh = String(date.getHours()).padStart(2, '0');
-            const mm = String(date.getMinutes()).padStart(2, '0');
-            const ss = String(date.getSeconds()).padStart(2, '0');
-            return `${hh}:${mm}:${ss}`;
+            const h = String(date.getHours()).padStart(2, '0');
+            const m = String(date.getMinutes()).padStart(2, '0');
+            const s = String(date.getSeconds()).padStart(2, '0');
+            return `${h}:${m}:${s}`;
         };
 
         const formatSignalTime = (date) => {
-            const hh = String(date.getHours()).padStart(2, '0');
-            const mm = String(date.getMinutes()).padStart(2, '0');
-            return `${hh}:${mm}`;
+            const h = String(date.getHours()).padStart(2, '0');
+            const m = String(date.getMinutes()).padStart(2, '0');
+            const s = String(date.getSeconds()).padStart(2, '0');
+            return `${h}:${m}:${s}`;
         };
 
         const addLog = (msg) => {
             state.logs.unshift(msg);
-            if (state.logs.length > 5) state.logs.pop();
-            renderLogs();
-        };
-
-        const renderLogs = () => {
+            if (state.logs.length > 8) state.logs.pop();
             logsEl.innerHTML = state.logs.map(log => `
-                <p class="text-[9px] font-mono text-slate-500 truncate">${log}</p>
+                <p class="text-[9px] font-mono text-slate-500 truncate border-b border-white/[0.02] pb-1">${log}</p>
             `).join('');
         };
 
-        // --- Core Loops ---
         setInterval(() => {
             state.currentTime = new Date();
             clockEl.textContent = formatFullTime(state.currentTime);
-            
-            state.entropy = Math.min(Math.max(state.entropy + (Math.random() * 0.001 - 0.0005), 0.82), 0.99);
+            state.entropy = Math.min(Math.max(state.entropy + (Math.random() * 0.001 - 0.0005), 0.88), 0.98);
             entropyEl.textContent = (state.entropy * 100).toFixed(2) + '%';
         }, 1000);
 
-        // --- Logic ---
         const generateSignals = () => {
-            const lastTime = inputEl.value;
-            if (!lastTime) {
-                errorText.textContent = "THINz_ERR: Timestamp entry required.";
+            const t1 = input1.value;
+            const t2 = input2.value;
+
+            if (!t1 || !t2) {
+                errorText.textContent = "REQUIRED: Two timestamps needed.";
                 errorMsg.classList.remove('hidden');
-                setTimeout(() => errorMsg.classList.add('hidden'), 4000);
+                setTimeout(() => errorMsg.classList.add('hidden'), 3000);
                 return;
             }
 
             state.isGenerating = true;
-            btnText.textContent = "CALCULATING VECTORS...";
+            btnText.textContent = "TRIANGULATING...";
             btnLoader.classList.remove('hidden');
             genBtn.disabled = true;
-            addLog(`[EXEC] Analyzing minute clusters for T-${lastTime}...`);
 
-            const steps = [
-                "Accessing THINz sub-nodes...",
-                "Calibrating 3x-10x probability range...",
-                "Synthesizing minute-sync data...",
-                "Executing 80% accuracy verification...",
-                "Unlocking signal vectors..."
+            const processSteps = [
+                "[DATA] Cross-referencing T1 and T2...",
+                "[MATH] Calculating temporal variance...",
+                "[CORE] Applying +2s latency buffer...",
+                "[SYNC] Finalizing probability vectors..."
             ];
 
-            let currentStep = 0;
-            const stepInterval = setInterval(() => {
-                if (currentStep < steps.length) {
-                    addLog(`[INFO] ${steps[currentStep]}`);
-                    currentStep++;
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < processSteps.length) {
+                    addLog(processSteps[i]);
+                    i++;
                 } else {
-                    clearInterval(stepInterval);
-                    finalizeSignals(lastTime);
+                    clearInterval(interval);
+                    finalizeData(t1, t2);
                 }
-            }, 450);
+            }, 600);
         };
 
-        const finalizeSignals = (lastTime) => {
-            const [h, m] = lastTime.split(':').map(Number);
+        const finalizeData = (t1, t2) => {
             const now = new Date();
-            const baseDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
             
-            const results = state.offsets.map((offset, idx) => {
-                const due = new Date(baseDate.getTime() + offset * 60000);
-                const odd = (3.0 + Math.random() * 7.0).toFixed(2);
-                const confidence = (81 + Math.random() * 8).toFixed(1);
-                return { due, odd, confidence, id: Date.now() + idx };
-            }).filter(sig => sig.due > now);
+            // Helper to turn HH:MM into a Date object for today
+            const parseTime = (timeStr) => {
+                const [h, m] = timeStr.split(':').map(Number);
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+            };
 
-            renderSignals(results);
+            const date1 = parseTime(t1);
+            const date2 = parseTime(t2);
+            
+            // Logic: Use the gap between t1 and t2 to influence the offsets
+            const gapMinutes = Math.abs(date1 - date2) / 60000;
+            const seed = gapMinutes % 10; 
 
+            const signals = state.offsets.map((off, idx) => {
+                // Calculation: Base + Offset + Seed influence + 2 second buffer
+                // Adding 2 seconds (2000ms) as requested
+                const targetTime = new Date(date1.getTime() + (off * 60000) + 2000);
+                
+                // Random variation for visual realism
+                const odd = (2.5 + Math.random() * 8).toFixed(2);
+                const conf = (85 + Math.random() * 10).toFixed(1);
+                
+                return { time: targetTime, odd, conf };
+            }).filter(s => s.time > now);
+
+            renderOutput(signals);
+            
             state.isGenerating = false;
-            btnText.textContent = "INITIALIZE SIGNALS";
+            btnText.textContent = "RUN DUAL ANALYSIS";
             btnLoader.classList.add('hidden');
             genBtn.disabled = false;
-            addLog(`[SUCCESS] Found ${results.length} high-confidence entries.`);
+            addLog(`[SUCCESS] Generated ${signals.length} valid vectors.`);
         };
 
-        const renderSignals = (signals) => {
+        const renderOutput = (signals) => {
             if (signals.length === 0) {
                 signalsGrid.innerHTML = `
-                    <div class="col-span-full py-28 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] bg-white/[0.01] text-center px-6">
-                        <div class="w-16 h-16 rounded-3xl bg-slate-900/50 flex items-center justify-center mb-6 border border-white/10 shadow-2xl">
-                            <i class="fa-solid fa-hourglass-end text-slate-700 text-xl"></i>
-                        </div>
-                        <p class="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">No Future Signals</p>
-                        <p class="text-slate-700 text-[10px] mt-2 font-bold max-w-[200px] leading-relaxed">
-                            Try updating the base time with a more recent 10x multiplier timestamp.
-                        </p>
+                    <div class="col-span-full py-20 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] bg-white/[0.01] text-center px-6">
+                        <i class="fa-solid fa-clock-rotate-left text-slate-700 text-2xl mb-4"></i>
+                        <p class="text-slate-500 text-xs font-black uppercase">No Future Windows Found</p>
+                        <p class="text-slate-700 text-[10px] mt-2 font-bold">The current timestamps have already passed their projected high-multiplier windows.</p>
                     </div>
                 `;
                 filterBadge.classList.add('hidden');
@@ -377,54 +365,43 @@
             }
 
             filterBadge.classList.remove('hidden');
-            signalsGrid.innerHTML = signals.map((sig, index) => `
-                <div class="group bg-[#0a0a0c] border border-white/10 rounded-2xl p-5 hover:border-violet-500/40 transition-all relative overflow-hidden shadow-xl fade-in" style="animation-delay: ${index * 0.05}s">
-                    <div class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-20 transition-opacity">
-                        <i class="fa-solid fa-bolt text-white text-5xl"></i>
-                    </div>
-
-                    <div class="flex items-center justify-between mb-5">
+            signalsGrid.innerHTML = signals.map((sig, i) => `
+                <div class="group bg-[#0a0a0c] border border-white/10 rounded-2xl p-5 hover:border-violet-500/40 transition-all relative overflow-hidden shadow-xl fade-in" style="animation-delay: ${i * 0.1}s">
+                    <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-black flex items-center justify-center border border-white/10 shadow-inner group-hover:border-violet-500/30 transition-colors">
-                                <i class="fa-regular fa-clock text-violet-500 text-lg"></i>
+                            <div class="w-10 h-10 rounded-xl bg-black flex items-center justify-center border border-white/10 group-hover:border-violet-500/30">
+                                <i class="fa-solid fa-bolt-lightning text-violet-500"></i>
                             </div>
                             <div>
-                                <p class="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] mb-0.5">Signal Time</p>
-                                <span class="text-2xl font-mono font-black text-white tracking-tight">
-                                    ${formatSignalTime(sig.due)}
-                                </span>
+                                <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest">Entry Target</p>
+                                <span class="text-xl font-mono font-black text-white">${formatSignalTime(sig.time)}</span>
                             </div>
                         </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-[8px] font-black text-slate-600 uppercase mb-1">Status</span>
-                            <span class="text-[9px] font-black text-lime-400 bg-lime-500/10 px-2.5 py-1 rounded-full border border-lime-500/20 uppercase tracking-tighter">Verified</span>
+                        <div class="text-right">
+                             <p class="text-[8px] font-black text-slate-600 uppercase mb-1">Conf.</p>
+                             <span class="text-[10px] font-bold text-lime-400 bg-lime-500/10 px-2 py-0.5 rounded border border-lime-500/20">${sig.conf}%</span>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-black/50 p-4 rounded-xl border border-white/5 group-hover:bg-violet-500/5 transition-colors">
-                            <p class="text-[9px] font-black text-slate-500 uppercase mb-1.5 tracking-widest">Expected Odd</p>
-                            <p class="text-3xl font-black text-white italic">${sig.odd}<span class="text-violet-500 text-lg ml-0.5">x</span></p>
+                        <div class="bg-black/40 p-3 rounded-xl border border-white/5">
+                            <p class="text-[8px] font-black text-slate-500 uppercase mb-1">Est. Odd</p>
+                            <p class="text-2xl font-black text-white">${sig.odd}<span class="text-violet-500 text-sm ml-0.5">x</span></p>
                         </div>
-                        <div class="bg-black/50 p-4 rounded-xl border border-white/5 group-hover:bg-violet-500/5 transition-colors">
-                            <p class="text-[9px] font-black text-slate-500 uppercase mb-1.5 tracking-widest">Precision</p>
-                            <p class="text-3xl font-black text-white">${sig.confidence}<span class="text-slate-600 text-lg ml-0.5">%</span></p>
+                        <div class="bg-black/40 p-3 rounded-xl border border-white/5">
+                            <p class="text-[8px] font-black text-slate-500 uppercase mb-1">Latency</p>
+                            <p class="text-2xl font-black text-white">+2.0<span class="text-slate-600 text-sm ml-0.5">s</span></p>
                         </div>
                     </div>
-
-                    <div class="mt-5 pt-4 border-t border-white/5 flex items-center justify-between">
-                        <span class="text-[8px] font-mono text-slate-700 tracking-widest uppercase">M_SIG: ${formatSignalTime(sig.due)} / ${sig.due.getMinutes()}M</span>
-                        <div class="flex gap-1.5">
-                            <div class="w-1 h-1 rounded-full bg-violet-500"></div>
-                            <div class="w-1 h-1 rounded-full bg-violet-500/50"></div>
-                            <div class="w-1 h-1 rounded-full bg-violet-500/20"></div>
-                        </div>
+                    
+                    <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                         <span class="text-[7px] font-mono text-slate-700 tracking-[0.2em] uppercase">Vector_ID: ${Math.random().toString(36).substr(2, 5).toUpperCase()}</span>
+                         <i class="fa-solid fa-signal text-violet-500/30 text-[10px]"></i>
                     </div>
                 </div>
             `).join('');
         };
 
-        // --- Listeners ---
         genBtn.addEventListener('click', generateSignals);
     </script>
 </body>
